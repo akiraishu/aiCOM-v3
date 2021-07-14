@@ -30,7 +30,7 @@
     newElement.setAttribute('aria-hidden', 'true');
     element.element.parentElement.insertBefore(newElement, element.element);
     element.prevElement =  element.element.previousElementSibling;
-    element.prevElement.style.opacity = '80';
+    element.prevElement.style.opacity = '0';
     element.prevElement.style.height = '1px';
     setPrevElementTop(element);
   };

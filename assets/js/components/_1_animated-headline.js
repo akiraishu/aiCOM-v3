@@ -7,9 +7,9 @@
     this.words = this.element.getElementsByClassName('js-text-anim__word');
     this.selectedWord = 0;
     // interval between two animations
-    this.loopInterval = parseFloat(getComputedStyle(this.element).getPropertyValue('--text-anim-pause'))*1250 || 1000;
+    this.loopInterval = parseFloat(getComputedStyle(this.element).getPropertyValue('--text-anim-pause'))*1000 || 500;
     // duration of single animation (e.g., time for a single word to rotate)
-    this.transitionDuration = parseFloat(getComputedStyle(this.element).getPropertyValue('--text-anim-duration'))*1000 || 1000;
+    this.transitionDuration = parseFloat(getComputedStyle(this.element).getPropertyValue('--text-anim-duration'))*500 || 500;
     // keep animating after first loop was completed
     this.loop = (this.element.getAttribute('data-loop') && this.element.getAttribute('data-loop') == 'off') ? false : true;
     this.wordInClass = 'text-anim__word--in';

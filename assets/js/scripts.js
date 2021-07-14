@@ -351,9 +351,9 @@ function resetFocusTabsStyle() {
     this.words = this.element.getElementsByClassName('js-text-anim__word');
     this.selectedWord = 0;
     // interval between two animations
-    this.loopInterval = parseFloat(getComputedStyle(this.element).getPropertyValue('--text-anim-pause'))*1250 || 1000;
+    this.loopInterval = parseFloat(getComputedStyle(this.element).getPropertyValue('--text-anim-pause'))*1000 || 500;
     // duration of single animation (e.g., time for a single word to rotate)
-    this.transitionDuration = parseFloat(getComputedStyle(this.element).getPropertyValue('--text-anim-duration'))*1000 || 1000;
+    this.transitionDuration = parseFloat(getComputedStyle(this.element).getPropertyValue('--text-anim-duration'))*500 || 500;
     // keep animating after first loop was completed
     this.loop = (this.element.getAttribute('data-loop') && this.element.getAttribute('data-loop') == 'off') ? false : true;
     this.wordInClass = 'text-anim__word--in';
@@ -735,7 +735,7 @@ function resetFocusTabsStyle() {
     newElement.setAttribute('aria-hidden', 'true');
     element.element.parentElement.insertBefore(newElement, element.element);
     element.prevElement =  element.element.previousElementSibling;
-    element.prevElement.style.opacity = '80';
+    element.prevElement.style.opacity = '0';
     element.prevElement.style.height = '1px';
     setPrevElementTop(element);
   };
@@ -1009,4 +1009,61 @@ function resetFocusTabsStyle() {
       })(i);
     }
   }
+}());
+// File#: _2_modal-video
+// Usage: codyhouse.co/license
+(function() {
+	var ModalVideo = function(element) {
+		this.element = element;
+		this.modalContent = this.element.getElementsByClassName('js-modal-video__content')[0];
+		this.media = this.element.getElementsByClassName('js-modal-video__media')[0];
+		this.contentIsIframe = this.media.tagName.toLowerCase() == 'iframe';
+		this.modalIsOpen = false;
+		this.initModalVideo();
+	};
+
+	ModalVideo.prototype.initModalVideo = function() {
+		var self = this;
+		// reveal modal content when iframe is ready
+		this.addLoadListener();
+		// listen for the modal element to be open -> set new iframe src attribute
+		this.element.addEventListener('modalIsOpen', function(event){
+			self.modalIsOpen = true;
+			self.media.setAttribute('src', event.detail.closest('[aria-controls]').getAttribute('data-url'));
+		});
+		// listen for the modal element to be close -> reset iframe and hide modal content
+		this.element.addEventListener('modalIsClose', function(event){
+			self.modalIsOpen = false;
+			Util.addClass(self.element, 'modal--is-loading');
+			self.media.setAttribute('src', '');
+		});
+	};
+
+	ModalVideo.prototype.addLoadListener = function() {
+		var self = this;
+		if(this.contentIsIframe) {
+			this.media.onload = function () {
+				self.revealContent();
+			};
+		} else {
+			this.media.addEventListener('loadedmetadata', function(){
+				self.revealContent();
+			});
+		}
+		
+	};
+
+	ModalVideo.prototype.revealContent = function() {
+		if( !this.modalIsOpen ) return;
+		Util.removeClass(this.element, 'modal--is-loading');
+		this.contentIsIframe ? this.media.contentWindow.focus() : this.media.focus();
+	};
+
+	//initialize the ModalVideo objects
+	var modalVideos = document.getElementsByClassName('js-modal-video__media');
+	if( modalVideos.length > 0 ) {
+		for( var i = 0; i < modalVideos.length; i++) {
+			(function(i){new ModalVideo(modalVideos[i].closest('.js-modal'));})(i);
+		}
+	}
 }());
